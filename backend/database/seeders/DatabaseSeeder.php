@@ -19,18 +19,18 @@ class DatabaseSeeder extends Seeder
     {
         DB::table('roles')->insert([
             [
-                'role' => 'Admin',
-                'type_number' => '1',
+                'name_role' => 'Admin',
+                'number_role' => 1,
                 'created_at' => Carbon::now('America/Sao_Paulo'),
             ],
             [
-                'role' => 'Employee',
-                'type_number' => '2',
+                'name_role' => 'Employee',
+                'number_role' => 2,
                 'created_at' => Carbon::now('America/Sao_Paulo'),
             ],
             [
-                'role' => 'Owner',
-                'type_number' => '3',
+                'name_role' => 'Owner',
+                'number_role' => 3,
                 'created_at' => Carbon::now('America/Sao_Paulo'),
             ],
         ]);
