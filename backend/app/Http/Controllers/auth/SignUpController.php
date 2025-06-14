@@ -24,7 +24,7 @@ class SignUpController extends Controller
                 'username' => 'required|string|unique:users,username',
                 'password' => 'required|string|min:8',
                 'role' => ['required', 'integer', 'in:' . implode(',', array_column(RoleEnum::cases(), 'value'))],
-            ], $messages->getValidationMessages());
+            ], $messages->getValidationMessagesCreateUser());
 
             $user = User::create([
                 'username' => $data->username,
