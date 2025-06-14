@@ -9,7 +9,7 @@ class Messages
         'error' => [],
     ];
 
-    public function getValidationMessages(): array
+    public function getValidationMessagesCreateUser(): array
     {
         return [
             'username.required' => 'O campo username é obrigatório.',
@@ -18,6 +18,15 @@ class Messages
             'password.min' => 'A senha deve ter no mínimo 8 caracteres.',
             'role.required' => 'O campo role é obrigatório.',
             'role.in' => 'O role informado é inválido.',
+        ];
+    }
+    public function getValidationMessagesLoginUser(): array
+    {
+        return [
+            'username.required' => 'O campo username é obrigatório.',
+            'username.unique' => 'O username informado já está em uso. Escolha outro.',
+            'password.required' => 'O campo senha é obrigatório.',
+            'password.min' => 'A senha deve ter no mínimo 8 caracteres.'
         ];
     }
 
