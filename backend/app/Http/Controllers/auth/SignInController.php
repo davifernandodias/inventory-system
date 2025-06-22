@@ -9,6 +9,8 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
+use Tymon\JWTAuth\Facades\JWTAuth;
+
 
 class SignInController extends Controller
 {
@@ -33,6 +35,7 @@ class SignInController extends Controller
             }
 
 
+            $token = JWTAuth::fromUser($user);
             $messages->addSuccess('Login realizado com sucesso!');
 
             return response()->json([
