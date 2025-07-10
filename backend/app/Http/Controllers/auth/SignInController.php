@@ -5,11 +5,11 @@ namespace App\Http\Controllers\auth;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Utils\Messages as UtilsMessages;
+use Firebase\JWT\JWT;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
-use Tymon\JWTAuth\Facades\JWTAuth;
 
 
 class SignInController extends Controller
@@ -18,6 +18,7 @@ class SignInController extends Controller
     {
         try {
             $messages = new UtilsMessages();
+
 
             $this->validate($data, [
                 'username' => 'required|string',
@@ -35,12 +36,26 @@ class SignInController extends Controller
             }
 
 
-            $token = JWTAuth::fromUser($user);
+            // "iss" Emissor do token
+            // "aud" Destinatario do token (frontend)
+            // "iat" Data de vencimento do token
+            // "nbf" pesquisar dps
+
+            $payload = [
+                "exp" => time() + 10,
+                "iat" => time(),
+                "user" => $user
+            ];
+
+            $encode = JWT::encode($payload, $_ENV['JWT_SECRET'], 'HS256');
+
+
             $messages->addSuccess('Login realizado com sucesso!');
 
             return response()->json([
                 'status' => 'success',
                 'message' => $messages->get('success'),
+                'token' => $encode
             ], 200);
 
         } catch (ValidationException $e) {
