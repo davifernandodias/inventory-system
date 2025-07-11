@@ -7,9 +7,6 @@ import Header from "@/components/header";
 export const metadata: Metadata = {
   title: "Cardápio Online",
   description: "Gerencie seu estabelecimento de forma segura e simples.",
-  icons: {
-    icon: '../favicon.ico'
-  }
 };
 
 export default function RootLayout({
