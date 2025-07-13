@@ -23,6 +23,11 @@ class User extends Model
      */
     protected $hidden = [
         'password',
+        'remember_token'
+    ];
+
+    protected $casts = [
+        'email_verified_at' => 'datetime'
     ];
 
     public function userHasRole(): HasMany
