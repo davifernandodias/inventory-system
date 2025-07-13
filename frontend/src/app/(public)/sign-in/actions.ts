@@ -1,45 +1,50 @@
 "use server";
-import { success, z } from "zod";
-import { signInService } from "@/app/services/auth/sign-in-service";
+import { z } from "zod";
 import { SchemaSignIn } from "@/validator/sign-in/validator";
-import { redirect } from 'next/navigation';
+import { signInService } from "@/services/auth/sign-in-service";
 
 export const SendSignInAction = async (currentState: any, formData: FormData) => {
   try {
     const email = formData.get("email");
     const password = formData.get("password");
 
-    // Valida os dados do formulário
+    // Validate form data
     const result = SchemaSignIn.safeParse({
       email,
       password,
     });
 
-    // Se a validação falhar, formata os erros usando z.treeifyError()
+    // If validation fails, format errors using z.treeifyError()
     if (!result.success) {
       const errors = z.treeifyError(result.error);
       throw new Error(JSON.stringify(errors.properties));
     }
 
-    // Extrai os dados validados
+    // Extract validated data
     const { email: emailValidator, password: passwordValidator } = result.data;
 
-    // Envia a requisição para o serviço de autenticação
+    // Send request to authentication service
     const response = await signInService({
       email: emailValidator,
       password: passwordValidator,
     });
 
-    // Retorna sucesso
-    if (response.status === 'success') {
-      console.log(response.status, "no sucess")
-      return { success: true };
+    console.log("Sign-in response:", response);
+
+    // Check for successful response
+    if (response.code === '1') {
+      console.log("Successful login");
+      return { success: true, mensagem: response.mensagem };
     } else {
-      console.log("resposta do else: " + response)
-      return { error: 'Erro na requisição: ' + JSON.stringify(response) };
+      console.log("Failed login:", response.mensagem);
+      return { error: `Erro na requisição: ${response.mensagem}` };
     }
 
   } catch (error) {
-    return { error: 'Erro durante a autenticação: ' + (error instanceof Error ? error.message : 'Erro desconhecido') };
+    console.error("Authentication error:", error);
+    return {
+      error: 'Erro durante a autenticação: ' +
+      (error instanceof Error ? error.message : 'Erro desconhecido')
+    };
   }
 };
