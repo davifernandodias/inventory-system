@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
-import '../globals.css'
+import './globals.css'
 
 
 export const metadata: Metadata = {
   title: "Cardápio Online",
-  description: "Gerencie seu estabelecimento de forma segura e simples."
+  description: "Gerencie seu estabelecimento de forma segura e simples.",
 };
 
 export default function RootLayout({
