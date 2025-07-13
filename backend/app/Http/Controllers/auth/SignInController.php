@@ -21,8 +21,8 @@ class SignInController extends Controller
 
 
             $this->validate($data, [
-                'username' => 'required|string',
-                'password' => 'required|string|min:8',
+                'username' => 'required|email',
+                'password' => 'required|string|max:8',
             ], $messages->getValidationMessagesLoginUser());
 
             $user = User::where('username', $data->username)->first();
@@ -42,7 +42,7 @@ class SignInController extends Controller
             // "nbf" pesquisar dps
 
             $payload = [
-                "exp" => time() + 10,
+                "exp" => time() + 60 * 60 * 24,
                 "iat" => time(),
                 "user" => $user
             ];
