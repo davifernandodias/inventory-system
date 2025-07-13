@@ -1,4 +1,5 @@
 interface signType {
   email: string,
-  password: string
+  password: string,
+  remember?: FormDataEntryValue | null
 }

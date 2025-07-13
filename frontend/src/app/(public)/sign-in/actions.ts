@@ -2,49 +2,51 @@
 import { z } from "zod";
 import { SchemaSignIn } from "@/validator/sign-in/validator";
 import { signInService } from "@/services/auth/sign-in-service";
+import { formatErrorMessage } from "@/utils/format-error";
 
 export const SendSignInAction = async (currentState: any, formData: FormData) => {
   try {
     const email = formData.get("email");
     const password = formData.get("password");
+    // Quando ativado recebe valor de "ON (string)", quando não vem valor "NULL"
+    const remember = formData.get('remember');
+
 
     // Validate form data
     const result = SchemaSignIn.safeParse({
       email,
-      password,
+      password
     });
 
-    // If validation fails, format errors using z.treeifyError()
+    // Valida se o tipo de erro e do zod validator
     if (!result.success) {
       const errors = z.treeifyError(result.error);
       throw new Error(JSON.stringify(errors.properties));
     }
 
-    // Extract validated data
+    // Extrai o resultado validado
     const { email: emailValidator, password: passwordValidator } = result.data;
 
     // Send request to authentication service
     const response = await signInService({
       email: emailValidator,
       password: passwordValidator,
+      remember: String(remember)
     });
 
-    console.log("Sign-in response:", response);
-
-    // Check for successful response
+    // Valida se foi sucesso
     if (response.code === '1') {
-      console.log("Successful login");
       return { success: true, mensagem: response.mensagem };
     } else {
-      console.log("Failed login:", response.mensagem);
-      return { error: `Erro na requisição: ${response.mensagem}` };
+      return { error: `Erro na consulta: ${response.mensagem}` };
     }
 
   } catch (error) {
-    console.error("Authentication error:", error);
+    const errorFormatado = await formatErrorMessage(error);
+    console.log(errorFormatado)
     return {
       error: 'Erro durante a autenticação: ' +
-      (error instanceof Error ? error.message : 'Erro desconhecido')
+      (error instanceof Error ? errorFormatado : 'Erro desconhecido')
     };
   }
 };

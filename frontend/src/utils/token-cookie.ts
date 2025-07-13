@@ -6,9 +6,9 @@ export async function setToken(token: string) {
 
   (await cookieStore).set('auth_token', token, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
+    secure: process.env.NODE_ENV === 'production',
     sameSite: 'strict',
-    maxAge: 60 * 60 * 24, // 1 day in seconds
+    maxAge: 60 * 60 * 24,
     path: '/'
   });
 

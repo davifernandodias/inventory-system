@@ -11,14 +11,12 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 
-
 class SignInController extends Controller
 {
     public function SignIn(Request $data): JsonResponse
     {
         try {
             $messages = new UtilsMessages();
-
 
             $this->validate($data, [
                 'username' => 'required|email',
@@ -35,20 +33,16 @@ class SignInController extends Controller
                 ], 401);
             }
 
-
-            // "iss" Emissor do token
-            // "aud" Destinatario do token (frontend)
-            // "iat" Data de vencimento do token
-            // "nbf" pesquisar dps
+            // Verifica se foi informado o remember
+            $isRemember = strtolower(trim($data->input('remember'))) === 'on';
 
             $payload = [
-                "exp" => time() + 60 * 60 * 24,
+                "exp" => $isRemember ? time() + 60 * 60 * 24 * 30 : time() + 60 * 60 * 24,
                 "iat" => time(),
                 "user" => $user
             ];
 
-            $encode = JWT::encode($payload, $_ENV['JWT_SECRET'], 'HS256');
-
+            $encode = JWT::encode($payload, env('JWT_SECRET'), 'HS256');
 
             $messages->addSuccess('Login realizado com sucesso!');
 
@@ -59,11 +53,16 @@ class SignInController extends Controller
             ], 200);
 
         } catch (ValidationException $e) {
-            $messages->addValidationErrors($e->validator);
+            // Retorna os erros de validação no formato esperado pelo frontend
+            $errors = [];
+            foreach ($e->validator->errors()->messages() as $field => $messages) {
+                $errors[$field] = ['errors' => $messages];
+            }
 
             return response()->json([
                 'status' => 'error',
-                'message' => $messages->get('error'),
+                'message' => 'Erro de validação nos campos',
+                'errors' => $errors
             ], 422);
 
         } catch (\Exception $e) {
